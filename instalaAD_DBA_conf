@@ -2,40 +2,53 @@
 
 set -e
 
-ARQUIVO="/etc/ssh/sshd_config.d/01-vitru.conf"
+DIR="/etc/sudoers.d"
 
-GRUPOS=(
-    "%GS_Linux_ADM_UNC@adm-cesumar.local             ALL=(ALL)       ALL"
-    "%GS_Linux_ADM_UNA@adm-cesumar.local             ALL=(ALL)       ALL"
-    "GS_Linux_DBA_VTR"
-)
+# =========================================================
+# Vitru
+# =========================================================
+echo "Configurando grupos DBA Vitru..."
 
-if [ "$EUID" -ne 0 ]; then
-    echo "Erro: execute como root."
-    exit 1
-fi
+cat >> "$DIR/10-vitru" <<EOF
 
-if [ ! -f "$ARQUIVO" ]; then
-    echo "Erro: arquivo $ARQUIVO não encontrado."
-    exit 1
-fi
+# DBA Vitru
+%GS_Linux_DBA_VTR ALL=(ALL) ALL
+EOF
 
-cp -a "$ARQUIVO" "${ARQUIVO}.bak"
+# =========================================================
+# Unicesumar
+# =========================================================
+echo "Configurando grupos DBA Unicesumar..."
 
-for GRUPO in "${GRUPOS[@]}"; do
-    if grep -Eq "^[[:space:]]*AllowGroups([[:space:]].*)?([[:space:]])${GRUPO}([[:space:]]|$)" "$ARQUIVO"; then
-        echo "Grupo já configurado: $GRUPO"
-    else
-        sed -i "/^[[:space:]]*AllowGroups/s/$/ $GRUPO/" "$ARQUIVO"
-        echo "Grupo adicionado: $GRUPO"
-    fi
-done
+cat >> "$DIR/30-unicesumar" <<EOF
 
-if sshd -t; then
-    systemctl reload sshd
-    echo "Configuração SSH validada e recarregada com sucesso."
+# DBA Unicesumar
+%GS_Linux_DBA_UNC ALL=(ALL) ALL
+%GS_Linux_DBA_UNC@adm-cesumar.local ALL=(ALL) ALL
+EOF
+
+# =========================================================
+# Uniasselvi
+# =========================================================
+echo "Configurando grupos DBA Uniasselvi..."
+
+cat >> "$DIR/20-uniasselvi" <<EOF
+
+# DBA Uniasselvi
+%GS_Linux_DBA_UNA ALL=(ALL) ALL
+%GS_Linux_DBA_UNA@grupouniasselvi.local ALL=(ALL) ALL
+EOF
+
+# =========================================================
+# Validacao
+# =========================================================
+echo "Validando sudoers..."
+
+if visudo -cf /etc/sudoers; then
+    echo "Configuracao validada com sucesso!"
 else
-    cp -a "${ARQUIVO}.bak" "$ARQUIVO"
-    echo "Erro na configuração SSH. Arquivo original restaurado."
+    echo "ERRO: Configuracao invalida!"
     exit 1
 fi
+
+echo "Finalizado."
