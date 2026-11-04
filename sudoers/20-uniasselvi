@@ -1,2 +1,3 @@
 # grupouniasselvi.local
 %GS_Linux_ADM_UNA@grupouniasselvi.local         ALL=(ALL)       ALL
+%GS_Linux_DBA_UNA@grupouniasselvi.local         ALL=(ALL)       ALL
