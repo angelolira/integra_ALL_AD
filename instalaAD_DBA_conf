@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+ARQUIVO="/etc/ssh/sshd_config.d/01-vitru.conf"
+
+GRUPOS=(
+    "GS_Linux_DBA_UNC"
+    "GS_Linux_DBA_UNA"
+    "GS_Linux_DBA_VTR"
+)
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Erro: execute como root."
+    exit 1
+fi
+
+if [ ! -f "$ARQUIVO" ]; then
+    echo "Erro: arquivo $ARQUIVO não encontrado."
+    exit 1
+fi
+
+cp -a "$ARQUIVO" "${ARQUIVO}.bak"
+
+for GRUPO in "${GRUPOS[@]}"; do
+    if grep -Eq "^[[:space:]]*AllowGroups([[:space:]].*)?([[:space:]])${GRUPO}([[:space:]]|$)" "$ARQUIVO"; then
+        echo "Grupo já configurado: $GRUPO"
+    else
+        sed -i "/^[[:space:]]*AllowGroups/s/$/ $GRUPO/" "$ARQUIVO"
+        echo "Grupo adicionado: $GRUPO"
+    fi
+done
+
+if sshd -t; then
+    systemctl reload sshd
+    echo "Configuração SSH validada e recarregada com sucesso."
+else
+    cp -a "${ARQUIVO}.bak" "$ARQUIVO"
+    echo "Erro na configuração SSH. Arquivo original restaurado."
+    exit 1
+fi

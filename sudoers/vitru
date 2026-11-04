@@ -1,0 +1,4 @@
+%GS_Linux_ADM_VTR         ALL=(ALL)       ALL
+%Access_Root@grupouniasselvi.local         ALL=(ALL)       ALL
+%GS_Linux_ADM_UNC@adm-cesumar.local         ALL=(ALL)       ALL
+%GS_Linux_ADM_UNC@grupouniasselvi.local         ALL=(ALL)       ALL

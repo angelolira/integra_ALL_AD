@@ -1,0 +1,93 @@
+#!/bin/bash
+
+echo "Instalando pacotes..."
+
+yum install dnf -y
+dnf install -y \
+    sssd \
+    realmd \
+    oddjob \
+    oddjob-mkhomedir \
+    adcli \
+    samba-common \
+    samba-common-tools \
+    krb5-workstation \
+    openldap-clients \
+    sssd-tools \
+    sssd-ldap \
+    authselect-compat
+
+echo "Baixando arquivos..."
+
+curl -fsSL -o /etc/sssd/sssd.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/sssd.conf
+curl -fsSL -o /etc/sssd/conf.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/10-vitru.conf
+curl -fsSL -o /etc/sssd/conf.d/20-uniasselvi.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/20-uniasselvi.conf
+curl -fsSL -o /etc/sssd/conf.d/30-unicesumar.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/30-unicesumar.conf
+curl -fsSL -o /etc/sudoers.d/05-contingencia https://raw.githubusercontent.com/angelolira//integra_ALL_AD/sudoers/05-contingencia
+curl -fsSL -o /etc/sudoers.d/10-vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/10-vitru
+curl -fsSL -o /etc/sudoers.d/20-uniasselvi https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/20-uniasselvi
+curl -fsSL -o /etc/sudoers.d/30-unicesumar https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/30-unicesumar
+curl -fsSL -o /etc/sudoers.d/vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/vitru
+curl -fsSL -o /etc/sudoers.d/rhel https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/rhel
+mv /etc/ssh/sshd_config.d/01-permitrootlogin.conf /etc/ssh/sshd_config.d/01-permitrootlogin.conf_old
+curl -fsSL -o /etc/ssh/sshd_config.d/01-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/01-vitru.conf
+curl -fsSL -o /etc/ssh/sshd_config.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/10-vitru.conf
+curl -fsSL -o /etc/ssh/sshd_config.d/01-permitrootlogin.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/01-permitrootlogin.conf
+
+echo "Ajustando permissões..."
+
+chmod 600 /etc/sssd/sssd.conf
+chown root:root /etc/sssd/sssd.conf
+
+chmod 440 /etc/sudoers.d/vitru
+chown root:root /etc/sudoers.d/vitru
+
+chmod 440 /etc/sudoers.d/05-contingencia
+chown root:root /etc/sudoers.d/05-contingencia
+
+chmod 440 /etc/sudoers.d/10-vitru
+chown root:root /etc/sudoers.d/10-vitru
+
+chmod 440 /etc/sudoers.d/20-uniasselvi
+chown root:root /etc/sudoers.d/20-uniasselvi
+
+chmod 440 /etc/sudoers.d/30-unicesumar
+chown root:root /etc/sudoers.d/30-unicesumar
+
+chmod 440 /etc/sudoers.d/rhel
+chown root:root /etc/sudoers.d/rhel
+
+chmod 644 /etc/ssh/sshd_config.d/10-vitru.conf
+chown root:root /etc/ssh/sshd_config.d/10-vitru.conf
+
+chmod 644 /etc/ssh/sshd_config.d/01-permitrootlogin.conf
+chown root:root /etc/ssh/sshd_config.d/01-permitrootlogin.conf
+
+chmod 644 /etc/ssh/sshd_config.d/01-vitru.conf
+chown root:root /etc/ssh/sshd_config.d/01-vitru.conf
+
+chown root:root /etc/sssd/conf.d/*.conf
+chmod 600 /etc/sssd/conf.d/*.conf
+
+echo "Ajustando configuracao do SSH..."
+
+sed -i 's/^#AuthorizedKeysFile .ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
+sed -i 's|^#Subsystem sftp /usr/libexec/openssh/sftp-server|Subsystem sftp /usr/libexec/openssh/sftp-server|' /etc/ssh/sshd_config
+sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^#*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+echo "Configurando authselect..."
+
+authselect select sssd with-mkhomedir --force
+
+echo "Habilitando serviços..."
+
+systemctl enable --now oddjobd
+systemctl enable --now sssd
+
+echo "Reiniciando SSH..."
+
+systemctl restart sshd
+systemctl restart sssd
+
+echo "Instalação concluída!"

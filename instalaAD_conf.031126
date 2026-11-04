@@ -1,0 +1,67 @@
+#!/bin/bash
+
+echo "Instalando pacotes..."
+
+yum install dnf -y
+dnf install -y \
+    sssd \
+    realmd \
+    oddjob \
+    oddjob-mkhomedir \
+    adcli \
+    samba-common \
+    samba-common-tools \
+    krb5-workstation \
+    openldap-clients \
+    sssd-tools \
+    sssd-ldap \
+    authselect-compat
+
+echo "Baixando arquivos..."
+
+#curl -fsSL -o /etc/sssd/sssd.conf $REPO/sssd.conf
+#curl -fsSL -o /etc/sudoers.d/ad $REPO/ad-sudoers
+curl -fsSL -o /etc/sssd/sssd.conf http://172.16.8.101/integra_ALL_AD/sssd.conf
+curl -fsSL -o /etc/sudoers.d/vitru http://172.16.8.101/integra_ALL_AD/ad-sudoers
+curl -fsSL -o /etc/ssh/sshd_config.d/01-vitru.conf http://172.16.8.101/integra_ALL_AD/01-vitru.conf
+#curl -fsSL -o /etc/ssh/sshd_config.d/02-ssh.conf http://172.16.8.101/integra_ALL_AD/02-ssh.conf
+mv /etc/ssh/sshd_config.d/01-permitrootlogin.conf /etc/ssh/sshd_config.d/01-permitrootlogin.conf_old
+
+echo "Ajustando permissões..."
+
+chmod 600 /etc/sssd/sssd.conf
+chown root:root /etc/sssd/sssd.conf
+
+chmod 440 /etc/sudoers.d/vitru
+chown root:root /etc/sudoers.d/vitru
+
+chmod 644 /etc/ssh/sshd_config.d/01-vitru.conf
+chown root:root /etc/ssh/sshd_config.d/01-vitru.conf
+
+echo "Ajustando configuracao do SSH..."
+
+sed -i 's/^#AuthorizedKeysFile .ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
+
+sed -i 's|^#Subsystem sftp /usr/libexec/openssh/sftp-server|Subsystem sftp /usr/libexec/openssh/sftp-server|' /etc/ssh/sshd_config
+
+#cat >> /etc/ssh/sshd_config <<'EOF'
+
+#Include /etc/ssh/sshd_config.d/*.conf
+#AuthorizedKeysFile .ssh/authorized_keys
+#Subsystem sftp /usr/libexec/openssh/sftp-server
+#EOF
+
+echo "Configurando authselect..."
+
+authselect select sssd with-mkhomedir --force
+
+echo "Habilitando serviços..."
+
+systemctl enable --now oddjobd
+systemctl enable --now sssd
+
+echo "Reiniciando SSH..."
+
+systemctl restart sshd
+
+echo "Instalação concluída!"
