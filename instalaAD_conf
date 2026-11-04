@@ -19,20 +19,20 @@ dnf install -y \
 
 echo "Baixando arquivos..."
 
-curl -fsSL -o /etc/sssd/sssd.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/sssd.conf
-curl -fsSL -o /etc/sssd/conf.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/10-vitru.conf
-curl -fsSL -o /etc/sssd/conf.d/20-uniasselvi.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/20-uniasselvi.conf
-curl -fsSL -o /etc/sssd/conf.d/30-unicesumar.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sssd/conf.d/30-unicesumar.conf
-curl -fsSL -o /etc/sudoers.d/05-contingencia https://raw.githubusercontent.com/angelolira//integra_ALL_AD/sudoers/05-contingencia
-curl -fsSL -o /etc/sudoers.d/10-vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/10-vitru
-curl -fsSL -o /etc/sudoers.d/20-uniasselvi https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/20-uniasselvi
-curl -fsSL -o /etc/sudoers.d/30-unicesumar https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/30-unicesumar
-curl -fsSL -o /etc/sudoers.d/vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/vitru
-curl -fsSL -o /etc/sudoers.d/rhel https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sudoers/rhel
+curl -fsSL -o /etc/sssd/sssd.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sssd/sssd.conf
+curl -fsSL -o /etc/sssd/conf.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sssd/conf.d/10-vitru.conf
+curl -fsSL -o /etc/sssd/conf.d/20-uniasselvi.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sssd/conf.d/20-uniasselvi.conf
+curl -fsSL -o /etc/sssd/conf.d/30-unicesumar.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sssd/conf.d/30-unicesumar.conf
+curl -fsSL -o /etc/sudoers.d/05-contingencia https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/05-contingencia
+curl -fsSL -o /etc/sudoers.d/10-vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/10-vitru
+curl -fsSL -o /etc/sudoers.d/20-uniasselvi https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/20-uniasselvi
+curl -fsSL -o /etc/sudoers.d/30-unicesumar https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/30-unicesumar
+curl -fsSL -o /etc/sudoers.d/vitru https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/vitru
+curl -fsSL -o /etc/sudoers.d/rhel https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sudoers/rhel
 mv /etc/ssh/sshd_config.d/01-permitrootlogin.conf /etc/ssh/sshd_config.d/01-permitrootlogin.conf_old
-curl -fsSL -o /etc/ssh/sshd_config.d/01-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/01-vitru.conf
-curl -fsSL -o /etc/ssh/sshd_config.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/10-vitru.conf
-curl -fsSL -o /etc/ssh/sshd_config.d/01-permitrootlogin.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/sshd_config.d/01-permitrootlogin.conf
+curl -fsSL -o /etc/ssh/sshd_config.d/01-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sshd_config.d/01-vitru.conf
+curl -fsSL -o /etc/ssh/sshd_config.d/10-vitru.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sshd_config.d/10-vitru.conf
+curl -fsSL -o /etc/ssh/sshd_config.d/01-permitrootlogin.conf https://raw.githubusercontent.com/angelolira/integra_ALL_AD/refs/heads/main/sshd_config.d/01-permitrootlogin.conf
 
 echo "Ajustando permissões..."
 
