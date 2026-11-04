@@ -1,54 +1,44 @@
+
 #!/bin/bash
 
 set -e
 
-DIR="/etc/sudoers.d"
+DIR="/etc/ssh/sshd_config.d"
 
-# =========================================================
-# Vitru
-# =========================================================
-echo "Configurando grupos DBA Vitru..."
+GRUPOS=(
+    "GS_Linux_DBA_UNA"
+    "GS_Linux_DBA_UNA@grupouniasselvi.local"
+    "GS_Linux_DBA_UNC"
+    "GS_Linux_DBA_UNC@adm-cesumar.local"
+    "GS_Linux_DBA_VTR"
+)
 
-cat >> "$DIR/10-vitru" <<EOF
+ARQUIVOS=(
+    "01-vitru.conf"
+    "10-vitru.conf"
+)
 
-# DBA Vitru
-%GS_Linux_DBA_VTR ALL=(ALL) ALL
-EOF
+for ARQUIVO in "${ARQUIVOS[@]}"; do
 
-# =========================================================
-# Unicesumar
-# =========================================================
-echo "Configurando grupos DBA Unicesumar..."
+    CAMINHO="$DIR/$ARQUIVO"
 
-cat >> "$DIR/30-unicesumar" <<EOF
+    echo "Configurando $CAMINHO..."
 
-# DBA Unicesumar
-%GS_Linux_DBA_UNC ALL=(ALL) ALL
-%GS_Linux_DBA_UNC@adm-cesumar.local ALL=(ALL) ALL
-EOF
+    for GRUPO in "${GRUPOS[@]}"; do
 
-# =========================================================
-# Uniasselvi
-# =========================================================
-echo "Configurando grupos DBA Uniasselvi..."
+        if grep -qE "^AllowGroups.*(^|[[:space:]])${GRUPO}([[:space:]]|$)" "$CAMINHO"; then
+            echo "Grupo $GRUPO já existe."
+        else
+            sed -i "/^AllowGroups/ s/$/ $GRUPO/" "$CAMINHO"
+            echo "Grupo $GRUPO adicionado."
+        fi
 
-cat >> "$DIR/20-uniasselvi" <<EOF
+    done
 
-# DBA Uniasselvi
-%GS_Linux_DBA_UNA ALL=(ALL) ALL
-%GS_Linux_DBA_UNA@grupouniasselvi.local ALL=(ALL) ALL
-EOF
+done
 
-# =========================================================
-# Validacao
-# =========================================================
-echo "Validando sudoers..."
+echo "Validando configuração SSH..."
 
-if visudo -cf /etc/sudoers; then
-    echo "Configuracao validada com sucesso!"
-else
-    echo "ERRO: Configuracao invalida!"
-    exit 1
-fi
+sshd -t
 
-echo "Finalizado."
+echo "Configuração validada."
