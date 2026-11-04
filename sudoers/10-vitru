@@ -1,3 +1,5 @@
 # vitru.local
 %GS_Linux_ADM_VTR                               ALL=(ALL)       ALL
 %GS_Linux_DBA_VTR                               ALL=(ALL)       ALL
+%GS_Linux_SI_VTR                               ALL=(ALL)       ALL
+%GS_Linux_NOC_VTR                               ALL=(ALL)       ALL
