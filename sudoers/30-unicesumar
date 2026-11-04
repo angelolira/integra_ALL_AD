@@ -1,3 +1,5 @@
 # adm-cesumar.local
 %GS_Linux_ADM_UNC@adm-cesumar.local             ALL=(ALL)       ALL
-%GS_Linux_ADM_DBA@adm-cesumar.local             ALL=(ALL)       ALL
+%GS_Linux_DBA@adm-cesumar.local             ALL=(ALL)       ALL
+%GS_Linux_SI_DBA@adm-cesumar.local             ALL=(ALL)       ALL
+%GS_Linux_NOC_DBA@adm-cesumar.local             ALL=(ALL)       ALL
