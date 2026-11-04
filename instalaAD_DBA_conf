@@ -5,8 +5,8 @@ set -e
 ARQUIVO="/etc/ssh/sshd_config.d/01-vitru.conf"
 
 GRUPOS=(
-    "GS_Linux_DBA_UNC"
-    "GS_Linux_DBA_UNA"
+    "%GS_Linux_ADM_UNC@adm-cesumar.local             ALL=(ALL)       ALL"
+    "%GS_Linux_ADM_UNA@adm-cesumar.local             ALL=(ALL)       ALL"
     "GS_Linux_DBA_VTR"
 )
 
